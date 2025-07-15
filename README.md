@@ -6,55 +6,75 @@
 
 ---
 
-## Project Overview
+## Business Problem
 
-During my Summer 2025 Metrology Retention internship at Entegris, I developed a modular suite of VBA macros in Excel to automate the end-to-end processing, analysis, and reporting of metrology data. By transforming raw inputs into structured tables, performing statistical calculations, and generating parameterized, color-coded reports, this solution reduced manual task time from **~38 minutes to under 3 minutes**—a **1200%+ efficiency gain**.
+During my Summer 2025 Metrology Retention internship at Entegris, our team identified a major bottleneck in the workflow for a particle‑analysis test, which measures the amount of particles and impurities in a sample. Each new request involved manually handling large CSV exports: copying data into master templates, recalculating metrics, rebuilding charts, and formatting reports. This manual process consumed **nearly 38 minutes per request**, delaying decision‑making and tying up skilled engineers in repetitive tasks.
 
-> **Note:** Due to confidentiality agreements, example files and full screenshots are not publicly available. Please contact me for a demo or to request access to anonymized samples.
+### Manual Workflow (Pre‑Automation)
 
-## Table of Contents
-1. [Features](#features)
-2. [Getting Started](#getting-started)
-3. [Project Structure](#project-structure)
-4. [Impact & Results](#impact--results)
-5. [Technologies & Skills](#technologies--skills)
-6. [Contact](#contact)
+1. **Import Data**
+   - Open raw CSV in Excel
+   - Copy relevant columns into the test template
+2. **Clean & Filter**
+   - Remove blank rows and non‑printable characters
+   - Manually apply filters to isolate the target sample batch
+3. **Calculate Metrics**
+   - Enter formulas to compute analyte‑to‑impurity ratios and percent purity
+   - Flag any samples that fall below the required thresholds
+4. **Build Charts**
+   - Insert and style bar charts showing particle counts
+   - Manually color‑code samples that fail specifications
+5. **Finalize Report**
+   - Adjust headers, column widths, and conditional formatting
+   - Save and distribute
 
-## Features
-- **Data Transformation:** Cleans, filters, and reshapes raw datasets into analysis-ready tables.
-- **Statistical Analysis:** Computes sums, averages, standard deviations, and flags high-variance results via VBA functions.
-- **Dynamic Reporting:** Generates consistent, color-coded workbooks, each with embedded charts and tables.
-- **Error Handling & Logging:** Validates inputs and logs anomalies for quick troubleshooting.
-- **Modular Design:** Separate macros for each workflow stage, enabling easy reuse and extension.
+This repetitive process was error‑prone, inconsistent, and strained lab throughput for a critical quality metric.
 
-## Getting Started
+## Automation Solution
 
-### Prerequisites
-- Microsoft Excel (2016 or later) with VBA enabled.
+I developed a modular VBA macro suite—all accessible from a single Master UserForm—that automates each step for the particle‑analysis test:
 
-### Installation & Usage
-This repository is a visual and documentation reference for the VBA automation project. The actual VBA code and macro-enabled workbook are not included due to confidentiality. For a demo or anonymized sample, please contact me directly.
+### Data Ingestion Module
+- Batch‑imports CSVs for all requested sample runs into hidden staging sheets
 
-## Project Structure
-```
-VBA_Automation/
-├── VBA Master Macro.png   # Screenshot of the macro interface
-└── README.md              # Project documentation (this file)
-```
+### Cleaning & Transformation Module
+- Automatically strips extraneous rows/characters
+- Applies test‑specific filter criteria in one step
+
+### Sub‑Macros for Data Validation
+- **Input Checker:** Verifies that manually entered parameters (e.g., sample IDs, thresholds) match expected formats.
+- **Structure Enforcer:** Ensures pasted data aligns with template columns and inserts any missing headers.
+- **Error Corrector:** Auto‑fixes common typos (extra spaces, misplaced decimals) and prompts the user when manual review is needed.
+
+These safeguards guarantee that the main macro always receives clean, correctly organized data.
+
+### Purity Analysis Module
+- Uses in‑memory arrays to compute analyte‑to‑impurity ratios, percent purity, and standard deviations
+- Flags any samples below defined thresholds
+
+### Dynamic Reporting Module
+- Generates a new workbook per request with parameterized, color‑coded charts in a uniform layout
+
+### Error Handling & Logging Module
+- Validates all required data columns and formats
+- Logs anomalies (missing values, out‑of‑range readings) to a hidden “Log” sheet
+
+### Master UserForm Interface
+- One‑click execution for the entire pipeline
+- Real‑time progress indicators and error messages
 
 ## Impact & Results
-- **1200%+ Efficiency Improvement:** Reduced processing time from ~38 minutes to under 3 minutes.
-- **Zero Manual-Entry Errors:** Automated workflows eliminated repetitive copy-paste mistakes.
-- **Consistent Reporting:** Uniform styling, formatting, and chart layouts.
-- **Scalability:** Modular macros can be extended for additional data types or report formats.
+
+- **Massive Time Savings:** Reduced per‑request processing from **~38 minutes** to **under 3 minutes**—a **>1200% improvement**.
+- **Zero Manual Errors:** Sub‑macros eliminated copy‑paste and formatting mistakes through automated validation and correction.
+- **Consistent Reporting:** Every report now has the same styling, formatting, and pass/fail indicators.
+- **Extensible Framework:** Easily adaptable to other lab tests by updating filter thresholds and metric calculations.
+- **Rapid Rollout:** Adopted by three other metrology teams within two weeks, each realizing similar productivity gains.
 
 ## Technologies & Skills
-- **Excel VBA:** Excel Object Model, UserForms, Chart Objects.
-- **Data Manipulation:** Range objects, arrays, and collection management in VBA.
-- **Statistical Calculations:** Custom functions for summary statistics and variance analysis.
-- **Error Handling:** `On Error` routines and hidden-worksheet logging.
-- **Performance Optimization:** `Application.ScreenUpdating`, batch operations, and memory management.
 
-## Contact
-**Ryan Cooley**  
-[Portfolio](https://ryan-cooley.github.io/RCPortfolio)  •  [Email](mailto:ryancooley20@gmail.com)
+- **Excel VBA:** Advanced use of the Excel Object Model, UserForms, and ChartObjects
+- **Data Manipulation:** Efficient array-based processing and batch operations with `Application.ScreenUpdating = False`
+- **Statistical & Purity Calculations:** Custom VBA functions to compute particle counts, purity percentages, and variance flags
+- **Error Handling:** Uses strategic `On Error Resume Next` statements around pattern‑based data operations, then checks `Err.Number` immediately after to handle or log exceptions, leveraging the consistent data layout to minimize complex error logic.
+- **Performance Tuning:** Minimized Select/Activate calls and optimized memory usage for large datasets
